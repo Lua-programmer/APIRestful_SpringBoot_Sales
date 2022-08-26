@@ -12,20 +12,26 @@ import java.util.Optional;
 public class ClienteController {
     private Clientes clientes;
 
-    public ClienteController( Clientes clientes ) {
+    public ClienteController(Clientes clientes) {
         this.clientes = clientes;
     }
 
     @GetMapping("/api/clientes/{id}")
     @ResponseBody
-    public ResponseEntity getClienteById( @PathVariable("id") Integer id ){
+    public ResponseEntity getClienteById(@PathVariable("id") Integer id) {
         Optional<Cliente> cliente = clientes.findById(id);
 
-        if(cliente.isPresent()){
-            return ResponseEntity.ok( cliente.get() );
+        if (cliente.isPresent()) {
+            return ResponseEntity.ok(cliente.get());
         }
-
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/api/clientes")
+    @ResponseBody  //Responde é o que retornar e Request é que entra na requisição
+    public ResponseEntity save(@RequestBody Cliente cliente) {
+        Cliente clienteSalvo = clientes.save(cliente);
+        return ResponseEntity.ok(clienteSalvo);
     }
 
 }
