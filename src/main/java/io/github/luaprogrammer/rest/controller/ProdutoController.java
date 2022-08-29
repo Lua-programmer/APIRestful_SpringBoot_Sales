@@ -6,6 +6,8 @@ import io.github.luaprogrammer.domain.repository.Produtos;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import static org.springframework.http.HttpStatus.*;
+
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,6 +31,7 @@ public class ProdutoController {
 
     @PostMapping
     @ResponseStatus(CREATED)
+    @Transactional
     public Produto save(@RequestBody Produto produto) {
         return produtos.save(produto);
     }
