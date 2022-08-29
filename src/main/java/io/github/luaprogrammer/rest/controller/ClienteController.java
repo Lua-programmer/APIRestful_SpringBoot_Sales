@@ -2,10 +2,13 @@ package io.github.luaprogrammer.rest.controller;
 
 import io.github.luaprogrammer.domain.entity.Cliente;
 import io.github.luaprogrammer.domain.repository.Clientes;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -54,6 +57,18 @@ public class ClienteController {
             clientes.save(cliente);
             return ResponseEntity.noContent().build();
         }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("api/clientes")
+
+    public ResponseEntity find(Cliente filtro) {
+        ExampleMatcher matcher = ExampleMatcher.matching() //faz as configurações para clientes através das propriedades
+                                                .withIgnoreCase() //Ignora os cases das strings, caixa alta ou baixa será a mesma coisa
+                                                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING); //fora como a string será encontrada,
+
+        Example example = Example.of(filtro, matcher);
+        List<Cliente> lista = clientes.findAll(example);
+        return ResponseEntity.ok(lista);
     }
 
 }
