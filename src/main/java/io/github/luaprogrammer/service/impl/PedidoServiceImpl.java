@@ -18,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
 @Service
@@ -33,7 +36,7 @@ public class PedidoServiceImpl implements PedidoService {
     @Transactional
     public Pedido salvar(PedidoDTO dto) {
         Integer idCliente = dto.getCliente();
-        Cliente cliente = clientesRepository.findById(idCliente).orElseThrow(() -> new Exception("Código de cliente inválido"));
+        Cliente cliente = clientesRepository.findById(idCliente).orElseThrow(() -> new Exception(NOT_FOUND, "Código de cliente inválido"));
 
 
         Pedido pedido = new Pedido();
@@ -49,14 +52,19 @@ public class PedidoServiceImpl implements PedidoService {
         return pedido;
     }
 
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return pedidosRepository.findByIdFetchItens(id);
+    }
+
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemsPedidoDTO> items) {
         if (items.isEmpty()) {
-            throw new Exception("Não é possível realizar um pedido sem items");
+            throw new Exception(NOT_FOUND, "Não é possível realizar um pedido sem items");
         }
 
         return items.stream().map(dto -> {
             Integer idProduto = dto.getProduto();
-            Produto produto = produtosRepository.findById(idProduto).orElseThrow(() -> new Exception("Código de produto inválido: " + idProduto));
+            Produto produto = produtosRepository.findById(idProduto).orElseThrow(() -> new Exception(NOT_FOUND, "Código de produto inválido: " + idProduto));
 
             ItemPedido itemPedido = new ItemPedido();
             itemPedido.setQuantidade(dto.getQuantidade());
