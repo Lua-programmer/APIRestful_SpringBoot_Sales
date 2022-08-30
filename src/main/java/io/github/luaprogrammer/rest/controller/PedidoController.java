@@ -9,7 +9,6 @@ import io.github.luaprogrammer.rest.dto.InformacaoItemPedidoDTO;
 import io.github.luaprogrammer.rest.dto.InformacoesPedidoDTO;
 import io.github.luaprogrammer.rest.dto.PedidoDTO;
 import io.github.luaprogrammer.service.PedidoService;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
