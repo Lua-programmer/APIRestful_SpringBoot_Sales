@@ -2,11 +2,14 @@ package io.github.luaprogrammer.rest.controller;
 
 import io.github.luaprogrammer.domain.entity.ItemPedido;
 import io.github.luaprogrammer.domain.entity.Pedido;
+import io.github.luaprogrammer.domain.enums.StatusPedido;
 import io.github.luaprogrammer.exception.Exception;
+import io.github.luaprogrammer.rest.dto.AtualizacaoStatusPedidoDTO;
 import io.github.luaprogrammer.rest.dto.InformacaoItemPedidoDTO;
 import io.github.luaprogrammer.rest.dto.InformacoesPedidoDTO;
 import io.github.luaprogrammer.rest.dto.PedidoDTO;
 import io.github.luaprogrammer.service.PedidoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +39,13 @@ public class PedidoController {
     @GetMapping("{id}")
     public InformacoesPedidoDTO getById(@PathVariable Integer id) {
         return service.obterPedidoCompleto(id).map(p -> converter(p)).orElseThrow(() -> new Exception(NOT_FOUND, "Pedido não encontrado"));
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(NO_CONTENT)
+    public void updateStatus(@PathVariable Integer id, @RequestBody AtualizacaoStatusPedidoDTO dto) {
+        String novoStatus = dto.getNovoStatus();
+        service.atualizaStatus(id, StatusPedido.valueOf(novoStatus));
     }
 
     private InformacoesPedidoDTO converter(Pedido pedido) {

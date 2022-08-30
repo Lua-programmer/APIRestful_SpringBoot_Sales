@@ -10,6 +10,7 @@ import io.github.luaprogrammer.domain.repository.ItemsPedido;
 import io.github.luaprogrammer.domain.repository.Pedidos;
 import io.github.luaprogrammer.domain.repository.Produtos;
 import io.github.luaprogrammer.exception.Exception;
+import io.github.luaprogrammer.exception.PedidoNaoEncontradoException;
 import io.github.luaprogrammer.rest.dto.ItemsPedidoDTO;
 import io.github.luaprogrammer.rest.dto.PedidoDTO;
 import io.github.luaprogrammer.service.PedidoService;
@@ -57,6 +58,15 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public Optional<Pedido> obterPedidoCompleto(Integer id) {
         return pedidosRepository.findByIdFetchItens(id);
+    }
+
+    @Override
+    @Transactional
+    public void atualizaStatus(Integer id, StatusPedido statusPedido) {
+        pedidosRepository.findById(id).map(pedido -> {
+            pedido.setStatus(statusPedido);
+            return pedidosRepository.save(pedido);
+        }).orElseThrow(() -> new PedidoNaoEncontradoException());
     }
 
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemsPedidoDTO> items) {
