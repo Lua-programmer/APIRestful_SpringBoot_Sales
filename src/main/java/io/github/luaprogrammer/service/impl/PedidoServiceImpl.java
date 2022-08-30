@@ -4,6 +4,7 @@ import io.github.luaprogrammer.domain.entity.Cliente;
 import io.github.luaprogrammer.domain.entity.ItemPedido;
 import io.github.luaprogrammer.domain.entity.Pedido;
 import io.github.luaprogrammer.domain.entity.Produto;
+import io.github.luaprogrammer.domain.enums.StatusPedido;
 import io.github.luaprogrammer.domain.repository.Clientes;
 import io.github.luaprogrammer.domain.repository.ItemsPedido;
 import io.github.luaprogrammer.domain.repository.Pedidos;
@@ -43,6 +44,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itemsPedido = converterItems(pedido, dto.getItems());
         pedidosRepository.save(pedido);
