@@ -9,6 +9,7 @@ import io.github.luaprogrammer.rest.dto.InformacaoItemPedidoDTO;
 import io.github.luaprogrammer.rest.dto.InformacoesPedidoDTO;
 import io.github.luaprogrammer.rest.dto.PedidoDTO;
 import io.github.luaprogrammer.service.PedidoService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class PedidoController {
         this.service = service;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     @ResponseStatus(CREATED)
     public Integer save(@RequestBody @Valid PedidoDTO dto) {
@@ -36,11 +38,13 @@ public class PedidoController {
         return pedido.getId();
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @GetMapping("{id}")
     public InformacoesPedidoDTO getById(@PathVariable Integer id) {
         return service.obterPedidoCompleto(id).map(p -> converter(p)).orElseThrow(() -> new Exception(NOT_FOUND, "Pedido não encontrado"));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void updateStatus(@PathVariable Integer id, @RequestBody AtualizacaoStatusPedidoDTO dto) {

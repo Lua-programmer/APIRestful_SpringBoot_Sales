@@ -26,6 +26,7 @@ public class ClienteController {
     }
 
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @GetMapping("/{id}")
     public Cliente getClienteById(@PathVariable("id") Integer id) {
         return clientes
@@ -34,13 +35,14 @@ public class ClienteController {
                         new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
     }
 
-    @PermitAll
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Cliente save(@RequestBody @Valid  Cliente cliente) {
         return clientes.save(cliente);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {
@@ -53,6 +55,7 @@ public class ClienteController {
 
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable @Valid Integer id, @RequestBody Cliente cliente) {
@@ -63,6 +66,7 @@ public class ClienteController {
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @GetMapping
     public List<Cliente> find(Cliente filtro) {
         ExampleMatcher matcher = ExampleMatcher.matching() //faz as configurações para clientes através das propriedades
