@@ -1,8 +1,11 @@
 package io.github.luaprogrammer.config;
 
 import io.github.luaprogrammer.service.impl.UsuarioServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,14 +19,14 @@ import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-//    private UsuarioServiceImpl usuarioService;
-//
-//    public SecurityConfig(UsuarioServiceImpl usuarioService) {
-//        this.usuarioService = usuarioService;
-//    }
+    private final UsuarioServiceImpl usuarioService;
+
+    public SecurityConfig(@Lazy UsuarioServiceImpl usuarioService) {
+        this.usuarioService = usuarioService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,24 +38,15 @@ public class SecurityConfig {
         http
                 .httpBasic()
                 .and()
-                .authorizeHttpRequests()
+                .authorizeHttpRequests().antMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                 .anyRequest()
-                .authenticated().and() //volta para a raiz do objeto
+                .authenticated().and()//volta para a raiz do objeto
                 .csrf().disable(); //desabilita a proteção csrf
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("user")
-                .password(passwordEncoder().encode("userPass"))
-                .roles("USER")
-                .build());
-        manager.createUser(User.withUsername("admin")
-                .password(passwordEncoder().encode("adminPass"))
-                .roles("USER", "ADMIN")
-                .build());
-        return manager;
+        return usuarioService;
     }
 }
