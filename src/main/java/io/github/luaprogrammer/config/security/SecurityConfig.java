@@ -1,4 +1,4 @@
-package io.github.luaprogrammer.config;
+package io.github.luaprogrammer.config.security;
 
 import io.github.luaprogrammer.service.impl.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

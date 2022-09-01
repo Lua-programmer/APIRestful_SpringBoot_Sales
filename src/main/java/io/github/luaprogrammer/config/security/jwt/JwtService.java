@@ -1,4 +1,4 @@
-package io.github.luaprogrammer;
+package io.github.luaprogrammer.config.security.jwt;
 
 import io.github.luaprogrammer.domain.entity.Usuario;
 import io.jsonwebtoken.Claims;
@@ -57,7 +57,7 @@ public class JwtService {
         return (String) obterClaims(token).getSubject();
     }
 
-    private boolean tokenValido(String token) {
+    public boolean tokenValido(String token) {
         try {
             Claims claims = obterClaims(token);
             Date dataExpiracao = claims.getExpiration();
