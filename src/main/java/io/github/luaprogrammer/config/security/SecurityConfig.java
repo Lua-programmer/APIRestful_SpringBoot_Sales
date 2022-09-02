@@ -10,16 +10,21 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
 @Configuration
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
@@ -27,7 +32,7 @@ public class SecurityConfig {
     @Autowired
     private JwtService jwtService;
 
-    public SecurityConfig( @Lazy UsuarioServiceImpl usuarioService) {
+    public SecurityConfig(@Lazy UsuarioServiceImpl usuarioService) {
         this.usuarioService = usuarioService;
     }
 
@@ -37,7 +42,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public OncePerRequestFilter jwtFilter(){
+    public OncePerRequestFilter jwtFilter() {
         return new JwtAuthFilter(jwtService, usuarioService);
     }
 
@@ -46,6 +51,7 @@ public class SecurityConfig {
         http
                 .csrf().disable() //desabilita a proteção csrf
                 .authorizeHttpRequests().antMatchers(HttpMethod.POST, "/api/usuarios/**").permitAll()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()//volta para a raiz do objeto
@@ -60,4 +66,5 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return usuarioService;
     }
+
 }
